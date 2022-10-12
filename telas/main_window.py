@@ -2,9 +2,11 @@ import PySimpleGUI as sg
 from telas import visualizar_window
 from telas import adicionar_materia_window
 from telas import tabela_notas_window
+from dados.manager import Manager
 
-def create():
-    teste = ['Português', 'Matemática', 'Química']
+def create(gbd: Manager):
+    table_materia = gbd.get_table('Materia')
+    materias = list(map(lambda e: getattr(e, 'Nome'), table_materia.get_elements()))
 
     font_normal = ('Arial', 17)
     font_button = ('Arial', 14)
@@ -16,7 +18,10 @@ def create():
         [sg.Text('Matérias', font=font_normal), sg.Push(),
          sg.Button('Visualizar', font=font_button, key='-VIEW-'),
          sg.Button('Adicionar', font=font_button, key='-ADD-')],
-        [sg.Listbox(teste, font=font_normal, size=(None, 8), expand_x=True)],
+        [sg.Listbox(
+            materias, materias[0], key='-LIST_MATERIAS-', font=font_normal,
+            size=(None, 8), expand_x=True
+        )],
         [sg.Button('Mostrar Tabela de Notas', font=font_button, key='-TABLE-')]
     ]
 
@@ -28,7 +33,7 @@ def create():
             break
         elif event == '-VIEW-':
             window.hide()
-            visualizar_window.create()
+            visualizar_window.create(gbd, values['-LIST_MATERIAS-'][0])
             window.un_hide()
         elif event == '-ADD-':
             adicionar_materia_window.create()

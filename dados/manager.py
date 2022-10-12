@@ -15,7 +15,7 @@ class Manager:
     def __init__(self):
         self.tabelas = dict((c for c in inspect.getmembers(tbl, inspect.isclass)))
 
-    def load_from_json(self, filename: str):
+    def load_from_json(self, filename: str) -> 'ValueError | None':
         table = self.tabelas.get(filename, None)
         file_dict = setter.load(filename)
 

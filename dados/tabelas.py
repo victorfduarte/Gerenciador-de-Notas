@@ -23,6 +23,16 @@ class Materia(bt.TableClass):
         self.Dias = Dias
         self.Avalicoes = bt.ForeignKey(avaliacao_table, 'Avaliacoes', avaliacao_value)
     
+    def to_dict(self) -> dict:
+        elements = {
+            'ID': self.ID.get(),
+            'Nome': self.Nome,
+            'Prof': self.Prof,
+            'Dias': self.Dias,
+            'Avaliacoes': self.Avalicoes.get()
+        }
+        return elements
+    
     def __repr__(self):
         return f'Materia(Nome = {self.Nome}, Avaliacoes = {self.Avalicoes})'
 
@@ -40,6 +50,16 @@ class Avaliacao(bt.TableClass):
         self.Nota = Nota
         self.Data = Data
         self.Materia = bt.ForeignKey(materia_table, 'Materia', materia_value)
+    
+    def to_dict(self) -> dict:
+        elements = {
+            'ID': self.ID.get(),
+            'Num_AV': self.Num_AV,
+            'Nota': self.Nota,
+            'Data': self.Data,
+            'Materia': self.Materia.get(),
+        }
+        return elements
 
     def __repr__(self):
         return f'Avaliacao(Num_AV = {self.Num_AV}, Materia = {self.Materia})'

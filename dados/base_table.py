@@ -17,13 +17,16 @@ class TableClass:
 
     def get_pk(self) -> 'PrimaryKey':
         return self.PK
+    
+    def to_dict(self) -> dict:
+        pass
 
     @classmethod
     def get_elements(cls) -> 'tuple[TableClass]':
         return tuple(cls.regs)
     
     @classmethod
-    def get_elements_by(cls, field: str, value):
+    def get_elements_by(cls, field: str, value) -> 'list[TableClass]':
         regs = []
         
         for reg in cls.regs:
@@ -38,7 +41,7 @@ class TableClass:
         return regs
     
     @classmethod
-    def get_element_pk(cls, value):
+    def get_element_pk(cls, value) -> 'TableClass':
         for reg in cls.regs:
             if getattr(reg, 'PK') == value:
                 return reg
