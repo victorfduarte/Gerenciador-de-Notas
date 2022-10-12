@@ -14,7 +14,7 @@ def save(filename: str, struct: dict):
 def load(filename: str) -> dict:
     content = ''
     try:
-        with open(f'jsons/{filename}.json', 'r') as file:
+        with open(f'jsons/{filename}.json', 'r', encoding='utf-8') as file:
             content = file.read()
         return json.loads(content)
     except FileNotFoundError:

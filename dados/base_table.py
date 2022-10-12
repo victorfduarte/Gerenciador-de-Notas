@@ -27,7 +27,11 @@ class TableClass:
         regs = []
         
         for reg in cls.regs:
+            '''
+            print([ord(c) for c in getattr(reg, field)])
+            print([ord(c) for c in value])
             print(f'{getattr(reg, field)} - {value}')
+            '''
             if getattr(reg, field) == value:
                 regs.append(reg)
         

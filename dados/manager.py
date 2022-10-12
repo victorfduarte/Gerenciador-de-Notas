@@ -3,9 +3,11 @@ import inspect
 
 try:
     import dados.tabelas as tbl
+    import dados.base_table as bt
     import dados.setter as setter
 except ImportError:
     import tabelas as tbl
+    import base_table as bt
     import setter
 
 
@@ -28,7 +30,7 @@ class Manager:
             table(**reg)
             #table.show_regs()
 
-    def get_table(self, name: str):
+    def get_table(self, name: str) -> bt.TableClass:
         table = self.tabelas.get(name, None)
 
         if table == None:

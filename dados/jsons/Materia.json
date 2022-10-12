@@ -1,5 +1,5 @@
 {
-    "header": ["Nome", "Prof", "Dias", "Avalicoes"],
+    "header": ["ID", "Nome", "Prof", "Dias", "Avalicoes"],
 
     "values": [
         {
@@ -15,7 +15,7 @@
 
         {
             "ID": 1,
-            "Nome": "Quimica",
+            "Nome": "Química",
             "Prof": "Savio",
             "Dias": ["QUA"],
             "Avaliacoes": {
