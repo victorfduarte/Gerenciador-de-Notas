@@ -6,7 +6,7 @@ from dados.manager import Manager
 
 def create(gbd: Manager):
     table_materia = gbd.get_table('Materia')
-    materias = list(map(lambda e: getattr(e, 'Nome'), table_materia.get_elements()))
+    materias = list(map(lambda e: getattr(e, 'Nome').get(), table_materia.get_elements()))
 
     font_normal = ('Arial', 17)
     font_button = ('Arial', 14)

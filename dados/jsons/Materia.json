@@ -20,7 +20,7 @@
             "Dias": ["QUA"],
             "Avaliacoes": {
                 "table": "Avaliacao",
-                "pk": [0, 5]
+                "pk": [1]
             }
         },
 
@@ -31,7 +31,7 @@
             "Dias": ["QUI", "QUA"],
             "Avaliacoes": {
                 "table": "Avaliacao",
-                "pk": [6, 8]
+                "pk": []
             }
         }
     ]

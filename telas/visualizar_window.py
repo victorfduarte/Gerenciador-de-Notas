@@ -8,10 +8,22 @@ from dados.manager import Manager
 def create(gbd: Manager, nome_materia: str):
     
     materia = gbd.get_table('Materia').get_elements_by('Nome', nome_materia)[0]
-    dias = getattr(materia, 'Dias')
+    dias = getattr(materia, 'Dias').get()
 
     checked = sg.theme_button_color_background()
     unchecked = sg.theme_text_element_background_color()
+
+    head = ['Av.', 'Nota', 'Data']
+    valores = []
+
+    for reg in getattr(materia, 'Avaliacoes').get():
+        attrs = gbd.get_table('Avaliacao').get_element_by_pk(reg).to_dict()
+        formato = (
+            f'{attrs["Num_AV"]}°',
+            f'{attrs["Nota"]}',
+            f'{attrs["Data"]}',
+        )
+        valores.append(formato)
 
     font_normal = ('Arial', 17)
     font_bolder = ('Arial', 17, 'bold')
@@ -19,20 +31,15 @@ def create(gbd: Manager, nome_materia: str):
     font_title = ('Arial', 20, 'bold')
     size_label_dia = (3, 1)
 
-    head = ['Av.', 'Nota', 'Data']
-    valores = [
-        ['1°', '10,0', '10 Mai 2022'],
-        ['2°', '8,0', '10 Out 2022'],
-    ]
-
     layout = [
         [sg.Push(), sg.Push(), sg.Text(
             nome_materia, font=font_title, border_width=25
          ), sg.Push(), sg.Button('Voltar', font=font_button, key='-BACK-')],
         [sg.Text('Professor(a):', font=font_normal),
-         sg.Text(getattr(materia, 'Prof'), font=font_bolder, )],
+         sg.Text(getattr(materia, 'Prof').get(), font=font_bolder, )],
         [sg.HorizontalSeparator()],
-        [sg.Text(
+        [sg.Push(),
+         sg.Text(
             'Seg', font=font_normal, key='-SEG-', border_width=8, pad=3,
             size=size_label_dia, justification='c',
             background_color = checked if 'SEG' in dias else unchecked
@@ -56,7 +63,7 @@ def create(gbd: Manager, nome_materia: str):
             'Sex', font=font_normal, key='-SEX-', border_width=8, pad=3,
             size=size_label_dia, justification='c',
             background_color = checked if 'SEX' in dias else unchecked
-         )],
+         ), sg.Push()],
         [sg.HorizontalSeparator()],
         [sg.Table(
             valores, head, font=font_normal, hide_vertical_scroll=True, expand_x=True,

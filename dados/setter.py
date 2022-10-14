@@ -21,13 +21,22 @@ def load(filename: str) -> dict:
         return ValueError(f'O arquivo {filename} não existe')
 
 
-def mount(self, cls: TableClass, struct: dict):
-    header: 'list[str]' = struct['header']
-    values: 'list[dict[str]]' = struct['values']
+def mount(table: TableClass, struct: dict):
+    registros: 'list[dict[str]]' = struct['values']
+    for reg in registros:
+        table(**reg)
 
-    for datadict in values:
-        #print(datadict)
-        c = cls(**datadict)
 
-def dismount(self) -> dict:
-    ...
+def dismount(table: TableClass):
+    list_regs: 'list[dict[str]]' = []
+    registros = TableClass.get_elements()
+
+    for reg in registros:
+        list_regs.append(reg.to_dict())
+    
+    struct = {
+        'header': TableClass.get_header(),
+        'values': list_regs
+    }
+    
+    return struct

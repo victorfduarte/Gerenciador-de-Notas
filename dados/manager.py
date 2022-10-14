@@ -13,7 +13,9 @@ except ImportError:
 
 class Manager:
     def __init__(self):
-        self.tabelas = dict((c for c in inspect.getmembers(tbl, inspect.isclass)))
+        self.tabelas: 'dict[str, bt.TableClass]' = dict(
+            (c for c in inspect.getmembers(tbl, inspect.isclass))
+        )
 
     def load_from_json(self, filename: str) -> 'ValueError | None':
         table = self.tabelas.get(filename, None)
@@ -25,10 +27,7 @@ class Manager:
         if table == None:
             return ValueError(f'Tabela {filename} não foi definida')
         
-        registros = file_dict['values']
-        for reg in registros:
-            table(**reg)
-            #table.show_regs()
+        setter.mount(table, file_dict)
 
     def get_table(self, name: str) -> bt.TableClass:
         table = self.tabelas.get(name, None)

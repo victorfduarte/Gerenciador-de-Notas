@@ -8,17 +8,9 @@ class TableClass:
 
     def __init_subclass__(cls, **kwargs):
         cls.regs: 'list[cls]' = []
-    
-    def add(self):
-        self.__class__.regs.append(self)
-    
-    def new_id(self):
-        pass
 
-    def get_pk(self) -> 'PrimaryKey':
-        return self.PK
-    
-    def to_dict(self) -> dict:
+    @classmethod
+    def get_header(cls) -> 'tuple[str]':
         pass
 
     @classmethod
@@ -35,13 +27,13 @@ class TableClass:
             print([ord(c) for c in value])
             print(f'{getattr(reg, field)} - {value}')
             '''
-            if getattr(reg, field) == value:
+            if getattr(reg, field).get() == value:
                 regs.append(reg)
         
         return regs
     
     @classmethod
-    def get_element_pk(cls, value) -> 'TableClass':
+    def get_element_by_pk(cls, value) -> 'TableClass':
         for reg in cls.regs:
             if getattr(reg, 'PK') == value:
                 return reg
@@ -49,6 +41,43 @@ class TableClass:
     @classmethod
     def show_regs(cls):
         print(cls.regs)
+
+
+    def add(self):
+        self.__class__.regs.append(self)
+    
+    def new_id(self):
+        pass
+
+    def get_pk(self) -> 'PrimaryKey':
+        return self.PK
+    
+    def get_all_values(self) -> tuple:
+        pass
+    
+    def to_dict(self) -> dict:
+        pass
+
+
+class Key:
+    def __init__(self, name: str, value):
+        self.name = name
+        self.value = value
+    
+
+    def set(self, value):
+        self.value = value
+    
+    def set_name(self, name):
+        self.name = name
+    
+    
+    def get(self):
+        return self.value
+    
+    def get_name(self):
+        return self.name
+    
 
 
 class PrimaryKey:
@@ -112,7 +141,7 @@ class ForeignKey:
     
     def get_table(self):
         return self.table
-    
+
 
     def __str__(self):
         return str(self.value)    

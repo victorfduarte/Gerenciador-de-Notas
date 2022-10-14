@@ -9,18 +9,18 @@
             "Data": "25 Out 2022",
             "Materia": {
                 "table": "Materia",
-                "pk": 1
+                "pk": 0
             }
         },
 
         {
-            "ID": 2,
+            "ID": 1,
             "Num_AV": 2,
             "Nota": 10.0,
             "Data": "10 Out 2022",
             "Materia": {
                 "table": "Materia",
-                "pk": 0
+                "pk": 2
             }
         }
     ]
