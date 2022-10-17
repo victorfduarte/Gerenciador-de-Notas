@@ -7,8 +7,8 @@ from dados.manager import Manager
 
 def create(gbd: Manager, nome_materia: str):
     
-    materia = gbd.get_table('Materia').get_elements_by('Nome', nome_materia)[0]
-    dias = getattr(materia, 'Dias').get()
+    materia = gbd.get_table('Materia').get_elements_by(Nome=nome_materia)[0]
+    dias = materia.get_value('Dias').get()
 
     checked = sg.theme_button_color_background()
     unchecked = sg.theme_text_element_background_color()
@@ -16,8 +16,9 @@ def create(gbd: Manager, nome_materia: str):
     head = ['Av.', 'Nota', 'Data']
     valores = []
 
-    for reg in getattr(materia, 'Avaliacoes').get():
-        attrs = gbd.get_table('Avaliacao').get_element_by_pk(reg).to_dict()
+    fk = materia.get_value('Avaliacoes')
+    for reg in fk.get():
+        attrs = fk.get_table().get_element_by_pk(reg).to_dict()
         formato = (
             f'{attrs["Num_AV"]}°',
             f'{attrs["Nota"]}',
@@ -68,23 +69,15 @@ def create(gbd: Manager, nome_materia: str):
         [sg.Table(
             valores, head, font=font_normal, hide_vertical_scroll=True, expand_x=True,
             num_rows=6, col_widths=(5, 6, 11), auto_size_columns=False,
-            enable_click_events=True, key='-TABLE-'
+            enable_events=True, key='-TABLE-'
         )],
         [sg.Text('Média das notas:', font=font_normal,), sg.Text('', font=font_normal)],
         [sg.Button('Editar Matéria', font=font_button, key='-EDIT_MAT-'),
-         sg.Button('Adicionar Nota', font=font_button,key='-EDIT_NOTA-')],
+         sg.Button('Adicionar Nota', font=font_button,key='-ADD_NOTA-')],
     ]
 
     window = sg.Window('Visualizar Matéria', layout, element_padding=7, modal=True)
 
-    '''
-    text_dias = ('-SEG-', '-TER-', '-QUA-', '-QUI-', '-SEX-')
-    for dia in getattr(materia, 'Dias'):
-        for text_dia in text_dias:
-            if dia == text_dia.strip('-'):
-                window[text_dia].update(background_color=sg.theme_button_color()[1])
-                break
-    '''
     while True:
         event, values = window.read()
         print(event, values)
@@ -95,10 +88,17 @@ def create(gbd: Manager, nome_materia: str):
             break
         elif event == '-EDIT_MAT-':
             adicionar_materia_window.create(True)
-        elif event == '-EDIT_NOTA-':
-            adicionar_notas_window.create()
+        elif event == '-ADD_NOTA-':
+            adicionar_notas_window.create(gbd, False)
         elif event == '-TABLE-':
-            adicionar_notas_window.create(True)
+            row_selected = values['-TABLE-'][0]
+            num_av = valores[row_selected][0][0]
+            materia_id = materia.get_pk().get()
+            aval = gbd.get_table('Avaliacao').get_elements_by(
+                Num_AV=num_av, Materia=materia_id
+            )[0]
+            print(aval)
+            adicionar_notas_window.create(gbd, True, aval, nome_materia)
 
     window.close()
     return False

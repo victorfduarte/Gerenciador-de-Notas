@@ -27,7 +27,7 @@ def mount(table: TableClass, struct: dict):
         table(**reg)
 
 
-def dismount(table: TableClass):
+def dismount(table: TableClass) -> dict:
     list_regs: 'list[dict[str]]' = []
     registros = TableClass.get_elements()
 

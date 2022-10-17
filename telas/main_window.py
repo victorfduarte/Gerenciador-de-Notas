@@ -6,7 +6,9 @@ from dados.manager import Manager
 
 def create(gbd: Manager):
     table_materia = gbd.get_table('Materia')
-    materias = list(map(lambda e: getattr(e, 'Nome').get(), table_materia.get_elements()))
+    nomes_materias = list(map(
+        lambda e: e.get_value('Nome').get(), table_materia.get_elements()
+    ))
 
     font_normal = ('Arial', 17)
     font_button = ('Arial', 14)
@@ -19,7 +21,7 @@ def create(gbd: Manager):
          sg.Button('Visualizar', font=font_button, key='-VIEW-'),
          sg.Button('Adicionar', font=font_button, key='-ADD-')],
         [sg.Listbox(
-            materias, materias[0], key='-LIST_MATERIAS-', font=font_normal,
+            nomes_materias, nomes_materias[0], key='-LIST_MATERIAS-', font=font_normal,
             size=(None, 8), expand_x=True
         )],
         [sg.Button('Mostrar Tabela de Notas', font=font_button, key='-TABLE-')]

@@ -18,7 +18,7 @@ class TableClass:
         return tuple(cls.regs)
     
     @classmethod
-    def get_elements_by(cls, field: str, value) -> 'list[TableClass]':
+    def get_elements_by(cls, **kwargs) -> 'list[TableClass]':
         regs = []
         
         for reg in cls.regs:
@@ -27,8 +27,9 @@ class TableClass:
             print([ord(c) for c in value])
             print(f'{getattr(reg, field)} - {value}')
             '''
-            if getattr(reg, field).get() == value:
-                regs.append(reg)
+            for field, value in kwargs.items():
+                if reg.get_value(field).get() == value:
+                    regs.append(reg)
         
         return regs
     
@@ -51,6 +52,9 @@ class TableClass:
 
     def get_pk(self) -> 'PrimaryKey':
         return self.PK
+    
+    def get_value(self, attr: str) -> 'Key | PrimaryKey | ForeignKey':
+        return getattr(self, attr)
     
     def get_all_values(self) -> tuple:
         pass
@@ -78,6 +82,12 @@ class Key:
     def get_name(self):
         return self.name
     
+
+    def __eq__(self, __obj):
+        return self.value == __obj    
+
+    def __str__(self):
+        return str(self.value)
 
 
 class PrimaryKey:
@@ -142,6 +152,9 @@ class ForeignKey:
     def get_table(self):
         return self.table
 
+    
+    def __eq__(self, __obj):
+        return self.value == __obj 
 
     def __str__(self):
         return str(self.value)    

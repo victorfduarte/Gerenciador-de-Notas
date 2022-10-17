@@ -20,7 +20,8 @@ def create():
             hide_vertical_scroll=True,
             num_rows=13,
             font=font_normal,
-            justification='center'),
+            justification='center',
+            expand_x=True),
         ]
     ]
 
