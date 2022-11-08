@@ -6,3 +6,6 @@ print(gbd.load_from_json('Materia'))
 print(gbd.load_from_json('Avaliacao'))
 
 main_window.create(gbd)
+
+print(gbd.save_table('Materia'))
+print(gbd.save_table('Avaliacao'))

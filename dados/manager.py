@@ -16,6 +16,7 @@ class Manager:
         self.tabelas: 'dict[str, bt.TableClass]' = dict(
             (c for c in inspect.getmembers(tbl, inspect.isclass))
         )
+        self.streams: 'dict[str, str]'= {}
 
     def load_from_json(self, filename: str) -> 'ValueError | None':
         table = self.tabelas.get(filename, None)
@@ -27,7 +28,27 @@ class Manager:
         if table == None:
             return ValueError(f'Tabela {filename} não foi definida')
         
+        self.streams.setdefault(table.__name__, filename)
         setter.mount(table, file_dict)
+    
+    def save_table(self, name: str, filename=''):
+        table = self.tabelas.get(name, None)
+
+        if table == None:
+            return NameError(f'A tabela {name} não existe')
+        
+        struct = setter.dismount(table)
+
+        if not filename:
+            file_name = self.streams.get(name, None)            
+            
+            if file_name == None:
+                return ValueError('o argumento filename nunca foi definido antes')
+
+            setter.save(file_name, struct)
+        else:
+            setter.save(filename, struct)
+
 
     def get_table(self, name: str) -> bt.TableClass:
         table = self.tabelas.get(name, None)

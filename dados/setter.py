@@ -7,8 +7,11 @@ except ImportError:
 
 
 def save(filename: str, struct: dict):
-    with open(filename, 'w') as file:
-        file.write(json.dumps(struct))
+    print(struct)
+    with open(f'dados/jsons/{filename}.json', 'w', encoding='utf-8') as file:
+        text = json.dumps(struct, ensure_ascii=False)
+        print(text)
+        file.write(text)
 
 
 def load(filename: str) -> dict:
@@ -29,13 +32,13 @@ def mount(table: TableClass, struct: dict):
 
 def dismount(table: TableClass) -> dict:
     list_regs: 'list[dict[str]]' = []
-    registros = TableClass.get_elements()
+    registros = table.get_elements()
 
     for reg in registros:
         list_regs.append(reg.to_dict())
     
     struct = {
-        'header': TableClass.get_header(),
+        'header': table.get_header(),
         'values': list_regs
     }
     

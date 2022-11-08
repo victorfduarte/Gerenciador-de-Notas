@@ -1,6 +1,3 @@
-
-import inspect
-
 try:
     import dados.base_table as bt
     import dados.setter as st
@@ -22,6 +19,8 @@ class Materia(bt.TableClass):
         self.Prof = bt.Key('Prof', Prof)
         self.Dias = bt.Key('Dias', Dias)
         self.Avaliacoes = bt.ForeignKey(avaliacao_table, 'Avaliacoes', avaliacao_value)
+
+        self.save()
     
     @classmethod
     def get_header(cls) -> 'tuple[str]':
@@ -36,15 +35,17 @@ class Materia(bt.TableClass):
             self.Avaliacoes.get(),
         )
     
-    def to_dict(self) -> dict:
-        elements = {
+    def save(self, commit=False):
+        self.stage = {
             'ID': self.ID.get(),
             'Nome': self.Nome.get(),
             'Prof': self.Prof.get(),
             'Dias': self.Dias.get(),
-            'Avaliacoes': self.Avaliacoes.get(),
+            'Avaliacoes': {
+                'table': 'Avaliacao',
+                'pk': self.Avaliacoes.get(),
+            }
         }
-        return elements
     
     def __repr__(self):
         return f'Materia(Nome = {self.Nome}, Avaliacoes = {self.Avaliacoes})'
@@ -63,6 +64,8 @@ class Avaliacao(bt.TableClass):
         self.Nota = bt.Key('Nota', Nota)
         self.Data = bt.Key('Data', Data)
         self.Materia = bt.ForeignKey(materia_table, 'Materia', materia_value)
+
+        self.save()
     
     @classmethod
     def get_header(cls) -> 'tuple[str]':
@@ -77,15 +80,17 @@ class Avaliacao(bt.TableClass):
             self.Materia.get(),
         )
     
-    def to_dict(self) -> dict:
-        elements = {
+    def save(self, commit=False):
+        self.stage = {
             'ID': self.ID.get(),
             'Num_AV': self.Num_AV.get(),
             'Nota': self.Nota.get(),
             'Data': self.Data.get(),
-            'Materia': self.Materia.get(),
+            'Materia': {
+                'table': 'Materia',
+                'pk': self.Materia.get(),
+            }
         }
-        return elements
 
     def __repr__(self):
         return f'Avaliacao(Num_AV = {self.Num_AV}, Materia = {self.Materia})'

@@ -8,6 +8,7 @@ from dados.manager import Manager
 def create(gbd: Manager, nome_materia: str):
     
     materia = gbd.get_table('Materia').get_elements_by(Nome=nome_materia)[0]
+    print(materia.get_all_values())
     dias = materia.get_value('Dias').get()
 
     checked = sg.theme_button_color_background()
@@ -17,11 +18,13 @@ def create(gbd: Manager, nome_materia: str):
     valores = []
 
     fk = materia.get_value('Avaliacoes')
+    print(f'{fk=}')
     for reg in fk.get():
         attrs = fk.get_table().get_element_by_pk(reg).to_dict()
+        print(attrs)
         formato = (
             f'{attrs["Num_AV"]}°',
-            f'{attrs["Nota"]}',
+            f'{attrs["Nota"]:.1f}',
             f'{attrs["Data"]}',
         )
         valores.append(formato)
@@ -92,13 +95,27 @@ def create(gbd: Manager, nome_materia: str):
             adicionar_notas_window.create(gbd, False)
         elif event == '-TABLE-':
             row_selected = values['-TABLE-'][0]
-            num_av = valores[row_selected][0][0]
+
+            num_av = int(valores[row_selected][0][0])
             materia_id = materia.get_pk().get()
+
+
+
             aval = gbd.get_table('Avaliacao').get_elements_by(
                 Num_AV=num_av, Materia=materia_id
             )[0]
             print(aval)
+
             adicionar_notas_window.create(gbd, True, aval, nome_materia)
+
+            valores[row_selected] = (
+                f'{aval.get_value("Num_AV").get()}°',
+                f'{aval.get_value("Nota").get():.1f}',
+                f'{aval.get_value("Data").get()}',
+            )
+
+            window['-TABLE-'].update(values=valores)
+
 
     window.close()
     return False

@@ -1,0 +1,38 @@
+{
+    "header": ["ID", "Num_AV", "Nota", "Data", "Materia"],
+
+    "values": [
+        {
+            "ID": 0,
+            "Num_AV": 1,
+            "Nota": 10,
+            "Data": "",
+            "Materia": {
+                "table": "Materia",
+                "pk": 0
+            }
+        },
+        
+        {
+            "ID": 1,
+            "Num_AV": 1,
+            "Nota": 8,
+            "Data": "",
+            "Materia": {
+                "table": "Materia",
+                "pk": 1
+            }
+        },
+
+        {
+            "ID": 2,
+            "Num_AV": 2,
+            "Nota": 6,
+            "Data": "",
+            "Materia": {
+                "table": "Materia",
+                "pk": 1
+            }
+        }
+    ]
+}

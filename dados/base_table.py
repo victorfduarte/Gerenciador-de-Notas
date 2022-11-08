@@ -5,6 +5,7 @@ class TableClass:
     def __init__(self):
         self.add()
         self.PK = PrimaryKey(self, '', '')
+        self.stage = {}
 
     def __init_subclass__(cls, **kwargs):
         cls.regs: 'list[cls]' = []
@@ -43,7 +44,6 @@ class TableClass:
     def show_regs(cls):
         print(cls.regs)
 
-
     def add(self):
         self.__class__.regs.append(self)
     
@@ -53,15 +53,26 @@ class TableClass:
     def get_pk(self) -> 'PrimaryKey':
         return self.PK
     
-    def get_value(self, attr: str) -> 'Key | PrimaryKey | ForeignKey':
-        return getattr(self, attr)
+    def get_value(self, attr: str) -> 'Key | PrimaryKey | ForeignKey | None':
+        try:
+            return getattr(self, attr)
+        except AttributeError:
+            return None
     
     def get_all_values(self) -> tuple:
         pass
+
+    def save(self, commit=False):
+        pass
     
     def to_dict(self) -> dict:
-        pass
+        return self.stage
 
+    def set_value(self, **kwargs):     
+        for attr, value in kwargs.items():
+            key = self.get_value(attr)
+            if key != None:
+                key.set(value)
 
 class Key:
     def __init__(self, name: str, value):
@@ -136,10 +147,10 @@ class ForeignKey:
     def set(self, value):
         self.value = value
     
-    def set_name(self, name):
+    def set_name(self, name: str):
         self.name = name
     
-    def set_table(self, table):
+    def set_table(self, table: TableClass):
         self.table = table
 
 
