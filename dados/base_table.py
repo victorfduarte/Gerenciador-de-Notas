@@ -29,8 +29,10 @@ class TableClass:
             print(f'{getattr(reg, field)} - {value}')
             '''
             for field, value in kwargs.items():
-                if reg.get_value(field).get() == value:
-                    regs.append(reg)
+                if reg.get_value(field).get() != value:
+                    break
+            else:
+                regs.append(reg)
         
         return regs
     
