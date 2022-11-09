@@ -92,21 +92,44 @@ def create(gbd: Manager, nome_materia: str):
         elif event == '-EDIT_MAT-':
             adicionar_materia_window.create(True)
         elif event == '-ADD_NOTA-':
-            adicionar_notas_window.create(gbd, False)
+            adicionar_notas_window.create(gbd, materia)
+
+            valores = []
+
+            fk = materia.get_value('Avaliacoes')
+            print(f'{fk.get()=}')
+            for reg in fk.get():
+                attrs = fk.get_table().get_element_by_pk(reg).to_dict()
+                print(attrs)
+                formato = (
+                    f'{attrs["Num_AV"]}°',
+                    f'{attrs["Nota"]:.1f}',
+                    f'{attrs["Data"]}',
+                )
+                valores.append(formato)
+            
+            window['-TABLE-'].update(values=valores)
+
         elif event == '-TABLE-':
             row_selected = values['-TABLE-'][0]
 
             num_av = int(valores[row_selected][0][0])
             materia_id = materia.get_pk().get()
 
-
+            print(f'{num_av=}')
+            print(f'{materia_id=}')
+            print(
+                gbd.get_table('Avaliacao').get_elements_by(
+                    Num_AV=num_av, Materia=materia_id
+                )
+            )
 
             aval = gbd.get_table('Avaliacao').get_elements_by(
                 Num_AV=num_av, Materia=materia_id
             )[0]
             print(aval)
 
-            adicionar_notas_window.create(gbd, True, aval, nome_materia)
+            adicionar_notas_window.create(gbd, materia, True, aval)
 
             valores[row_selected] = (
                 f'{aval.get_value("Num_AV").get()}°',

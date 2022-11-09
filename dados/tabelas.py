@@ -7,14 +7,15 @@ except ImportError or ModuleNotFoundError:
 
 
 class Materia(bt.TableClass):
-    def __init__(self, ID: int, Nome: str, Prof: str, Dias: 'list[str]',
-    Avaliacoes: 'dict[str]'):
-        super().__init__()
+    def __init__(
+            self, *, ID: int = None, Nome: str, Prof: str,
+            Dias: 'list[str]', Avaliacoes: 'dict[str]'
+    ):
+        super().__init__(ID)
 
         avaliacao_table = eval(Avaliacoes['table'], globals())
         avaliacao_value = Avaliacoes['pk']
 
-        self.ID = bt.PrimaryKey(self, 'ID', ID)
         self.Nome = bt.Key('Nome', Nome)
         self.Prof = bt.Key('Prof', Prof)
         self.Dias = bt.Key('Dias', Dias)
@@ -51,15 +52,17 @@ class Materia(bt.TableClass):
         return f'Materia(Nome = {self.Nome}, Avaliacoes = {self.Avaliacoes})'
 
 
+
 class Avaliacao(bt.TableClass):
-    def __init__(self, ID: int, Num_AV: int, Nota: float,
-    Data: str, Materia: 'dict[str]'):
-        super().__init__()
+    def __init__(
+            self, *, ID: int = None, Num_AV: int, Nota: float,
+            Data: str, Materia: 'dict[str]'
+    ):
+        super().__init__(ID)
 
         materia_table = eval(Materia["table"], globals())
         materia_value = Materia["pk"]
 
-        self.ID = bt.PrimaryKey(self, 'ID', ID)
         self.Num_AV = bt.Key('Num_AV', Num_AV)
         self.Nota = bt.Key('Nota', Nota)
         self.Data = bt.Key('Data', Data)

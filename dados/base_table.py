@@ -1,10 +1,18 @@
 
 class TableClass:
     regs: 'list[TableClass]' = []
+    next_free_id = 0
+    free_ids = []
 
-    def __init__(self):
+    def __init__(self, id: int):
+
+        if id == None:
+            self.ID = PrimaryKey(self, 'ID', self.__class__.new_id())
+        else:
+            self.ID = PrimaryKey(self, 'ID', self.__class__.new_id(id))
+
         self.add()
-        self.PK = PrimaryKey(self, '', '')
+        self.PK = self.ID
         self.stage = {}
 
     def __init_subclass__(cls, **kwargs):
@@ -49,8 +57,32 @@ class TableClass:
     def add(self):
         self.__class__.regs.append(self)
     
-    def new_id(self):
-        pass
+    @classmethod
+    def new_id(cls, default: int = None) -> int:
+        if default == None:
+            if cls.free_ids:
+                return cls.free_ids.pop()
+
+            new_id = cls.next_free_id
+            cls.next_free_id += 1
+            return new_id
+
+        else:
+            if default == cls.next_free_id:
+                cls.next_free_id += 1
+                return default
+            
+            if default > cls.next_free_id:
+                cls.free_ids.extend(range(cls.next_free_id, default))
+                cls.next_free_id = default + 1
+                return default
+            
+            if default < cls.next_free_id:
+                if default in cls.free_ids:
+                    cls.free_ids.remove(default)
+                    return default
+                else:
+                    raise ValueError('Este valor de para ID não pode ser utilizado')
 
     def get_pk(self) -> 'PrimaryKey':
         return self.PK
