@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 from telas import adicionar_notas_window
 from telas import adicionar_materia_window
+from telas import editar_nota_window
 from dados.base_table import TableClass
 from dados.manager import Manager
 
@@ -28,6 +29,8 @@ def create(gbd: Manager, nome_materia: str):
             f'{attrs["Data"]}',
         )
         valores.append(formato)
+    
+    valores.sort(key=lambda reg: int(reg[0][0]))
 
     font_normal = ('Arial', 17)
     font_bolder = ('Arial', 17, 'bold')
@@ -108,6 +111,8 @@ def create(gbd: Manager, nome_materia: str):
                 )
                 valores.append(formato)
             
+            valores.sort(key=lambda reg: int(reg[0][0]))
+            
             window['-TABLE-'].update(values=valores)
 
         elif event == '-TABLE-':
@@ -129,7 +134,7 @@ def create(gbd: Manager, nome_materia: str):
             )[0]
             print(aval)
 
-            adicionar_notas_window.create(gbd, materia, True, aval)
+            editar_nota_window.create(gbd, materia, aval)
 
             valores[row_selected] = (
                 f'{aval.get_value("Num_AV").get()}°',
