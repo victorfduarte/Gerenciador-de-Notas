@@ -1,15 +1,9 @@
 
 import inspect
 
-try:
-    import dados.tabelas as tbl
-    import dados.base_table as bt
-    import dados.setter as setter
-except ImportError:
-    import tabelas as tbl
-    import base_table as bt
-    import setter
-
+from . import tabelas as tbl
+from . import base_table as bt
+from . import setter as setter
 
 class Manager:
     tabelas: 'dict[str, bt.TableClass]' = dict(

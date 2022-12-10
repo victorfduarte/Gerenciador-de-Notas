@@ -1,4 +1,5 @@
 from . import fields
+from . import manager
 
 
 class MetaTable(type):
@@ -68,11 +69,6 @@ class Table(metaclass=MetaTable):
         regs = []
         
         for reg in cls.regs:
-            '''
-            print([ord(c) for c in getattr(reg, field)])
-            print([ord(c) for c in value])
-            print(f'{getattr(reg, field)} - {value}')
-            '''
             for field, value in kwargs.items():
                 if reg.get_value(field) != value:
                     break
@@ -84,7 +80,7 @@ class Table(metaclass=MetaTable):
     @classmethod
     def get_by_pk(cls, value) -> 'Table':
         for reg in cls.regs:
-            if getattr(reg, 'PK') == value:
+            if getattr(reg, 'id') == value:
                 return reg
 
     @classmethod
@@ -121,11 +117,8 @@ class Table(metaclass=MetaTable):
 
     # MÉTODOS DE INSTÂNCIA ---
 
-    def add(self):
-        self.__class__.regs.append(self)
-
     def get_pk(self) -> int:
-        return self.PK
+        return self.id
     
     def get_value(self, attr: str):
         try:
@@ -134,16 +127,25 @@ class Table(metaclass=MetaTable):
             return None
     
     def get_all_values(self) -> tuple:
-        pass
+        return tuple(self.__dict__.values())
+    
+    def set_value(self, **kwargs):     
+        for attr, value in kwargs.items():
+            if self.get_value(attr) != None:
+                setattr(self, attr, value)
+    
+    def add(self):
+        self.__class__.regs.append(self)
 
     def save(self, commit=False) -> None:
-        pass
+        self.stage.update(self.__dict__)
+        
+        if commit:
+            result = manager.Manager.save_table(self.__class__)
+            
+            if result == ValueError:
+                raise result
+
     
     def to_dict(self) -> dict:
         return self.stage
-
-    def set_value(self, **kwargs):     
-        for attr, value in kwargs.items():
-            key = self.get_value(attr)
-            if key != None:
-                key.set(value)
