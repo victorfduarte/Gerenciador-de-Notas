@@ -1,33 +1,70 @@
+from . import fields
 
-class TableClass:
-    regs: 'list[TableClass]' = []
+
+class MetaTable(type):
+    def __new__(cls, name: str, bases: tuple, namespace: dict):
+        print(namespace)
+
+        __fields__ = {'id': fields.PrimaryKey(cls)}
+
+        for key, value in namespace.items():
+            if type(value) == fields.Field:
+                value.set_name(key)
+                __fields__.setdefault(key, value)
+                print(f'CHAVE {key} ENCONTRADA')
+        
+        print(__fields__)
+        namespace.setdefault('__fields__', __fields__)
+
+        return type.__new__(cls, name, bases, namespace)
+
+
+class Table(metaclass=MetaTable):
+    regs: 'list[Table]' = []
     next_free_id = 0
     free_ids = []
 
-    def __init__(self, id: int):
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            f: fields.Field = self.__fields__.get(key, ValueError)
 
-        if id == None:
-            self.ID = PrimaryKey(self, 'ID', self.__class__.new_id())
-        else:
-            self.ID = PrimaryKey(self, 'ID', self.__class__.new_id(id))
+            if f == ValueError:
+                raise f('Campo inexistente')
+            
+            setattr(self, key, f.new(value))
+
+        for key in self.__fields__.keys():
+            self.__dict__.setdefault(key, None)
+        
+        self.id = self.__class__.new_id()
+
+        print('Objeto Criado com Sucesso')
 
         self.add()
-        self.PK = self.ID
         self.stage = {}
+    
+    @classmethod
+    def init_from_db(cls, **kwargs):
+        instance = cls.__new__(cls)
+        instance.__dict__.update(kwargs)
+        return instance
 
     def __init_subclass__(cls, **kwargs):
         cls.regs: 'list[cls]' = []
+
+
+    # MÉTODOS DE CLASSE ---
 
     @classmethod
     def get_header(cls) -> 'tuple[str]':
         pass
 
     @classmethod
-    def get_elements(cls) -> 'tuple[TableClass]':
+    def get_elements(cls) -> 'tuple[Table]':
         return tuple(cls.regs)
     
     @classmethod
-    def get_elements_by(cls, **kwargs) -> 'list[TableClass]':
+    def filter_by(cls, **kwargs) -> 'list[Table]':
         regs = []
         
         for reg in cls.regs:
@@ -45,7 +82,7 @@ class TableClass:
         return regs
     
     @classmethod
-    def get_element_by_pk(cls, value) -> 'TableClass':
+    def get_by_pk(cls, value) -> 'Table':
         for reg in cls.regs:
             if getattr(reg, 'PK') == value:
                 return reg
@@ -84,10 +121,13 @@ class TableClass:
                 else:
                     raise ValueError('Este valor de para ID não pode ser utilizado')
 
-    def get_pk(self) -> 'PrimaryKey':
+
+    # MÉTODOS DE INSTÂNCIA ---
+
+    def get_pk(self) -> int:
         return self.PK
     
-    def get_value(self, attr: str) -> 'Key | PrimaryKey | ForeignKey | None':
+    def get_value(self, attr: str):
         try:
             return getattr(self, attr)
         except AttributeError:
@@ -96,7 +136,7 @@ class TableClass:
     def get_all_values(self) -> tuple:
         pass
 
-    def save(self, commit=False):
+    def save(self, commit=False) -> None:
         pass
     
     def to_dict(self) -> dict:
@@ -107,99 +147,3 @@ class TableClass:
             key = self.get_value(attr)
             if key != None:
                 key.set(value)
-
-class Key:
-    def __init__(self, name: str, value):
-        self.name = name
-        self.value = value
-    
-
-    def set(self, value):
-        self.value = value
-    
-    def set_name(self, name):
-        self.name = name
-    
-    
-    def get(self):
-        return self.value
-    
-    def get_name(self):
-        return self.name
-    
-
-    def __eq__(self, __obj):
-        return self.value == __obj    
-
-    def __str__(self):
-        return str(self.value)
-
-
-class PrimaryKey:
-    def __init__(self, register: TableClass, name: str, value):
-        self.register = register
-        self.name = name
-        self.value = value
-
-        setattr(register, 'PK', self)
-    
-
-    def set(self, value):
-        self.value = value
-    
-    def set_name(self, name):
-        self.name = name
-    
-    def set_register(self, register):
-        self.register = register
-
-
-    def get(self):
-        return self.value
-    
-    def get_name(self):
-        return self.name
-    
-    def get_register(self):
-        return self.register
-
-
-    def __eq__(self, __obj):
-        return self.value == __obj    
-
-    def __str__(self):
-        return str(self.value)
-
-
-class ForeignKey:
-    def __init__(self, table: TableClass, name: str, value):
-        self.table = table
-        self.name = name
-        self.value = value
-    
-
-    def set(self, value):
-        self.value = value
-    
-    def set_name(self, name: str):
-        self.name = name
-    
-    def set_table(self, table: TableClass):
-        self.table = table
-
-
-    def get(self):
-        return self.value
-    
-    def get_name(self):
-        return self.name
-    
-    def get_table(self):
-        return self.table
-
-    
-    def __eq__(self, __obj):
-        return self.value == __obj 
-
-    def __str__(self):
-        return str(self.value)    

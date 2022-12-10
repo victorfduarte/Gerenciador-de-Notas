@@ -1,12 +1,9 @@
-try:
-    import dados.base_table as bt
-    import dados.setter as st
-except ImportError or ModuleNotFoundError:
-    import base_table as bt
-    import setter as st
+from . import base_table as bt
+from . import fields
+from . import setter as st
 
 
-class Materia(bt.TableClass):
+class Materia(bt.Table):
     def __init__(
             self, *, ID: int = None, Nome: str, Prof: str,
             Dias: 'list[str]', Avaliacoes: 'dict[str]'
@@ -53,7 +50,13 @@ class Materia(bt.TableClass):
 
 
 
-class Avaliacao(bt.TableClass):
+class Avaliacao(bt.Table):
+    num_AV = bt.Key()
+    nota = bt.Key()
+    data = bt.Key()
+    materia = bt.ForeignKey(Materia)
+
+
     def __init__(
             self, *, ID: int = None, Num_AV: int, Nota: float,
             Data: str, Materia: 'dict[str]'
@@ -98,6 +101,11 @@ class Avaliacao(bt.TableClass):
     def __repr__(self):
         return f'Avaliacao(Num_AV = {self.Num_AV}, Materia = {self.Materia})'
 
+
+class A(bt.Table):
+    num_av = fields.Field()
+    data = fields.Field()
+    pass
 
 
 if __name__ == '__main__':
