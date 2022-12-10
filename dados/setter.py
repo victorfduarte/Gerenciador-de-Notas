@@ -1,9 +1,5 @@
 import json
-
-try:
-    from dados.base_table import TableClass
-except ImportError:
-    from base_table import TableClass
+from . import base_table as bt
 
 
 def save(filename: str, struct: dict):
@@ -24,13 +20,13 @@ def load(filename: str) -> dict:
         return ValueError(f'O arquivo {filename} não existe')
 
 
-def mount(table: TableClass, struct: dict):
+def mount(table: 'bt.Table', struct: dict):
     registros: 'list[dict[str]]' = struct['values']
     for reg in registros:
-        table(**reg)
+        print('Nova instância: ', table.init_from_db(**reg))
 
 
-def dismount(table: TableClass) -> dict:
+def dismount(table: 'bt.Table') -> dict:
     list_regs: 'list[dict[str]]' = []
     registros = table.get_elements()
 

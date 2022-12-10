@@ -3,75 +3,10 @@ from . import fields
 from . import setter as st
 
 
-class Materia(bt.Table):
-    def __init__(
-            self, *, ID: int = None, Nome: str, Prof: str,
-            Dias: 'list[str]', Avaliacoes: 'dict[str]'
-    ):
-        super().__init__(ID)
-
-        avaliacao_table = eval(Avaliacoes['table'], globals())
-        avaliacao_value = Avaliacoes['pk']
-
-        self.Nome = bt.Key('Nome', Nome)
-        self.Prof = bt.Key('Prof', Prof)
-        self.Dias = bt.Key('Dias', Dias)
-        self.Avaliacoes = bt.ForeignKey(avaliacao_table, 'Avaliacoes', avaliacao_value)
-
-        self.save()
-    
-    @classmethod
-    def get_header(cls) -> 'tuple[str]':
-        return 'ID', 'Nome', 'Prof', 'Dias', 'Avaliacoes'
-    
-    def get_all_values(self) -> tuple:
-        return (
-            self.ID.get(),
-            self.Nome.get(),
-            self.Prof.get(),
-            self.Dias.get(),
-            self.Avaliacoes.get(),
-        )
-    
-    def save(self, commit=False):
-        self.stage = {
-            'ID': self.ID.get(),
-            'Nome': self.Nome.get(),
-            'Prof': self.Prof.get(),
-            'Dias': self.Dias.get(),
-            'Avaliacoes': {
-                'table': 'Avaliacao',
-                'pk': self.Avaliacoes.get(),
-            }
-        }
-    
-    def __repr__(self):
-        return f'Materia(Nome = {self.Nome}, Avaliacoes = {self.Avaliacoes})'
-
-
-
 class Avaliacao(bt.Table):
-    num_AV = bt.Key()
-    nota = bt.Key()
-    data = bt.Key()
-    materia = bt.ForeignKey(Materia)
-
-
-    def __init__(
-            self, *, ID: int = None, Num_AV: int, Nota: float,
-            Data: str, Materia: 'dict[str]'
-    ):
-        super().__init__(ID)
-
-        materia_table = eval(Materia["table"], globals())
-        materia_value = Materia["pk"]
-
-        self.Num_AV = bt.Key('Num_AV', Num_AV)
-        self.Nota = bt.Key('Nota', Nota)
-        self.Data = bt.Key('Data', Data)
-        self.Materia = bt.ForeignKey(materia_table, 'Materia', materia_value)
-
-        self.save()
+    num_AV = fields.Field()
+    nota = fields.Field()
+    data = fields.Field()
     
     @classmethod
     def get_header(cls) -> 'tuple[str]':
@@ -100,6 +35,41 @@ class Avaliacao(bt.Table):
 
     def __repr__(self):
         return f'Avaliacao(Num_AV = {self.Num_AV}, Materia = {self.Materia})'
+
+
+class Materia(bt.Table):
+    nome = fields.Field()
+    prof = fields.Field()
+    dias = fields.Field()
+    avaliacoes = fields.ForeignKey(Avaliacao)
+    
+    @classmethod
+    def get_header(cls) -> 'tuple[str]':
+        return 'ID', 'Nome', 'Prof', 'Dias', 'Avaliacoes'
+    
+    def get_all_values(self) -> tuple:
+        return (
+            self.ID.get(),
+            self.Nome.get(),
+            self.Prof.get(),
+            self.Dias.get(),
+            self.Avaliacoes.get(),
+        )
+    
+    def save(self, commit=False):
+        self.stage = {
+            'ID': self.ID.get(),
+            'Nome': self.Nome.get(),
+            'Prof': self.Prof.get(),
+            'Dias': self.Dias.get(),
+            'Avaliacoes': {
+                'table': 'Avaliacao',
+                'pk': self.Avaliacoes.get(),
+            }
+        }
+    
+    def __repr__(self):
+        return f'Materia(Nome = {self.Nome}, Avaliacoes = {self.Avaliacoes})'
 
 
 class A(bt.Table):

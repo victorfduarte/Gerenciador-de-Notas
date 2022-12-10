@@ -12,46 +12,44 @@ except ImportError:
 
 
 class Manager:
-    def __init__(self):
-        self.tabelas: 'dict[str, bt.TableClass]' = dict(
+    tabelas: 'dict[str, bt.TableClass]' = dict(
             (c for c in inspect.getmembers(tbl, inspect.isclass))
         )
-        self.streams: 'dict[str, str]'= {}
+    streams: 'dict[bt.Table, str]'= {}
+    
+    @classmethod
+    def set_stream(cls, table: 'bt.Table', filename: str):
+        if table not in cls.streams.keys():
+            cls.streams.setdefault(table, filename)
 
-    def load_from_json(self, filename: str) -> 'ValueError | None':
-        table = self.tabelas.get(filename, None)
+    @classmethod
+    def load_from_json(cls, table: 'bt.Table') -> 'ValueError | None':
+        filename = cls.streams.get(table, None)
+
+        if filename == None:
+            return ValueError('o argumento filename nunca foi definido antes')
+
         file_dict = setter.load(filename)
 
         if type(file_dict) == ValueError:
             return file_dict
-
-        if table == None:
-            return ValueError(f'Tabela {filename} não foi definida')
         
-        self.streams.setdefault(table.__name__, filename)
         setter.mount(table, file_dict)
     
-    def save_table(self, name: str, filename=''):
-        table = self.tabelas.get(name, None)
+    @classmethod
+    def save_table(cls, table: 'bt.Table'):
+        struct = setter.dismount(cls)
 
-        if table == None:
-            return NameError(f'A tabela {name} não existe')
+        file_name = cls.streams.get(table, None)            
         
-        struct = setter.dismount(table)
+        if file_name == None:
+            return ValueError('o argumento filename nunca foi definido antes')
 
-        if not filename:
-            file_name = self.streams.get(name, None)            
-            
-            if file_name == None:
-                return ValueError('o argumento filename nunca foi definido antes')
+        setter.save(file_name, struct)
 
-            setter.save(file_name, struct)
-        else:
-            setter.save(filename, struct)
-
-
-    def get_table(self, name: str) -> bt.TableClass:
-        table = self.tabelas.get(name, None)
+    @classmethod
+    def get_table(cls, name: str) -> 'bt.Table':
+        table = cls.tabelas.get(name, None)
 
         if table == None:
             return NameError(f'A tabela {name} não existe')
@@ -94,5 +92,5 @@ if __name__ == '__main__':
     m.load_from_json('Avaliacao')
     m.load_from_json('Materia')
 
-    print(m.get_table('Materia').get_elements_by('Nome', 'Português'))
+    print(m.get_table('Materia').filter_by('Nome', 'Português'))
     

@@ -3,17 +3,13 @@ from . import fields
 
 class MetaTable(type):
     def __new__(cls, name: str, bases: tuple, namespace: dict):
-        print(namespace)
-
         __fields__ = {'id': fields.PrimaryKey(cls)}
 
         for key, value in namespace.items():
             if type(value) == fields.Field:
                 value.set_name(key)
                 __fields__.setdefault(key, value)
-                print(f'CHAVE {key} ENCONTRADA')
         
-        print(__fields__)
         namespace.setdefault('__fields__', __fields__)
 
         return type.__new__(cls, name, bases, namespace)
@@ -47,6 +43,10 @@ class Table(metaclass=MetaTable):
     def init_from_db(cls, **kwargs):
         instance = cls.__new__(cls)
         instance.__dict__.update(kwargs)
+
+        instance.add()
+        instance.stage = {}
+
         return instance
 
     def __init_subclass__(cls, **kwargs):
@@ -74,7 +74,7 @@ class Table(metaclass=MetaTable):
             print(f'{getattr(reg, field)} - {value}')
             '''
             for field, value in kwargs.items():
-                if reg.get_value(field).get() != value:
+                if reg.get_value(field) != value:
                     break
             else:
                 regs.append(reg)
@@ -90,9 +90,6 @@ class Table(metaclass=MetaTable):
     @classmethod
     def show_regs(cls):
         print(cls.regs)
-
-    def add(self):
-        self.__class__.regs.append(self)
     
     @classmethod
     def new_id(cls, default: int = None) -> int:
@@ -123,6 +120,9 @@ class Table(metaclass=MetaTable):
 
 
     # MÉTODOS DE INSTÂNCIA ---
+
+    def add(self):
+        self.__class__.regs.append(self)
 
     def get_pk(self) -> int:
         return self.PK
