@@ -21,17 +21,18 @@ def load(filename: str) -> dict:
 
 
 def mount(table: 'bt.Table', struct: dict):
-    registros: 'list[dict[str]]' = struct['values']
+    registros: 'list[list]' = struct['values']
     for reg in registros:
-        print('Nova instância: ', table.init_from_db(**reg))
+        pack = dict(zip(struct['header'], reg))
+        print('Nova instância: ', table.init_from_db(**pack))
 
 
 def dismount(table: 'bt.Table') -> dict:
-    list_regs: 'list[dict[str]]' = []
+    list_regs: 'list[list]' = []
     registros = table.get_elements()
 
     for reg in registros:
-        list_regs.append(reg.to_dict())
+        list_regs.append(list(reg.to_dict().values()))
     
     struct = {
         'header': table.get_header(),

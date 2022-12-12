@@ -1,15 +1,19 @@
 from . import fields
 from . import manager
+from typing import Any
 
 
 class MetaTable(type):
-    def __new__(cls, name: str, bases: tuple, namespace: dict):
+    def __new__(cls, name: str, bases: tuple, namespace: 'dict[str, fields.Field | Any]'):
         __fields__ = {'id': fields.PrimaryKey(cls)}
+        __header__: 'list[str]' = []
 
         for key, value in namespace.items():
-            if type(value) == fields.Field:
+            if isinstance(value, fields.Field):
                 value.set_name(key)
                 __fields__.setdefault(key, value)
+                __header__.append(key)
+
         
         namespace.setdefault('__fields__', __fields__)
 
@@ -58,7 +62,7 @@ class Table(metaclass=MetaTable):
 
     @classmethod
     def get_header(cls) -> 'tuple[str]':
-        pass
+        return cls.__header__
 
     @classmethod
     def get_elements(cls) -> 'tuple[Table]':
