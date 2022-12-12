@@ -3,7 +3,7 @@ from dados.manager import Manager
 from dados import tabelas
 
 def create(
-        gbd: Manager, materia: tabelas.Materia, avaliacao: tabelas.Avaliacao
+        materia: tabelas.Materia, avaliacao: tabelas.Avaliacao
 ) -> 'tuple[int, str, str]':
 
     avs = [1, 2, 3, 4]

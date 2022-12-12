@@ -6,7 +6,7 @@ from dados.base_table import TableClass
 from dados.manager import Manager
 
 
-def create(gbd: Manager, nome_materia: str):
+def create(nome_materia: str):
     
     materia = gbd.get_table('Materia').get_elements_by(Nome=nome_materia)[0]
     print(materia.get_all_values())
