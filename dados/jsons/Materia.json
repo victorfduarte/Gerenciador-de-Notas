@@ -1,1 +1,33 @@
-{"header": ["ID", "Nome", "Prof", "Dias", "Avaliacoes"], "values": [{"ID": 0, "Nome": "Português", "Prof": "Elizabeth", "Dias": ["TER", "SEG"], "Avaliacoes": {"table": "Avaliacao", "pk": [0, 6]}}, {"ID": 1, "Nome": "Química", "Prof": "Savio", "Dias": ["QUA"], "Avaliacoes": {"table": "Avaliacao", "pk": [1, 2]}}, {"ID": 2, "Nome": "Biologia", "Prof": "Flávio", "Dias": ["QUI", "QUA"], "Avaliacoes": {"table": "Avaliacao", "pk": [3, 4, 5, 7]}}]}
+{
+    "header": [
+        "id",
+        "nome",
+        "prof",
+        "dias",
+        "avaliacoes"
+    ],
+    
+    "values": [
+        [
+            0,
+            "Português",
+            "Elizabeth",
+            ["TER", "SEG"],
+            [0, 6]
+        ],
+        [
+            1,
+            "Química",
+            "Savio",
+            ["QUA"],
+            [1, 2]
+        ],
+        [
+            2,
+            "Biologia",
+            "Flávio",
+            ["QUI", "QUA"],
+            [3, 4, 5, 7]
+        ]
+    ]
+}
