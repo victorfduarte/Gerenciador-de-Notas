@@ -4,8 +4,8 @@ from telas import adicionar_materia_window
 from telas import tabela_notas_window
 from dados.manager import Manager
 
-def create(gbd: Manager):
-    table_materia = gbd.get_table('Materia')
+def create():
+    table_materia = Manager.get_table('Materia')
     nomes_materias = list(map(
         lambda e: e.get_value('Nome').get(), table_materia.get_elements()
     ))
@@ -35,7 +35,7 @@ def create(gbd: Manager):
             break
         elif event == '-VIEW-':
             window.hide()
-            visualizar_window.create(gbd, values['-LIST_MATERIAS-'][0])
+            visualizar_window.create(Manager, values['-LIST_MATERIAS-'][0])
             window.un_hide()
         elif event == '-ADD-':
             adicionar_materia_window.create()
