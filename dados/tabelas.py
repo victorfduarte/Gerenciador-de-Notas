@@ -9,7 +9,7 @@ class Avaliacao(bt.Table):
     data = fields.Field()    
 
     def __repr__(self):
-        return f'Avaliacao(num_av = {self.num_av}, Materia = {self.Materia})'
+        return f'Avaliacao(num_av = {self.num_av})'
 
 
 class Materia(bt.Table):
@@ -19,7 +19,7 @@ class Materia(bt.Table):
     avaliacoes = fields.ForeignKey(Avaliacao)
     
     def __repr__(self):
-        return f'Materia(Nome = {self.Nome}, Avaliacoes = {self.Avaliacoes})'
+        return f'Materia(nome = {self.nome}, avaliacoes = {self.avaliacoes})'
 
 
 if __name__ == '__main__':

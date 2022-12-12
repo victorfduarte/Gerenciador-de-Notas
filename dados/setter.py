@@ -13,7 +13,7 @@ def save(filename: str, struct: dict):
 def load(filename: str) -> dict:
     content = ''
     try:
-        with open(f'dados/jsons/{filename}.json', 'r', encoding='utf-8') as file:
+        with open(f'dados/jsons/{filename}', 'r', encoding='utf-8') as file:
             content = file.read()
         return json.loads(content)
     except FileNotFoundError:
@@ -24,7 +24,8 @@ def mount(table: 'bt.Table', struct: dict):
     registros: 'list[list]' = struct['values']
     for reg in registros:
         pack = dict(zip(struct['header'], reg))
-        print('Nova instância: ', table.init_from_db(**pack))
+        print('Nova instância: ', end='')
+        print(table.init_from_db(**pack))
 
 
 def dismount(table: 'bt.Table') -> dict:
