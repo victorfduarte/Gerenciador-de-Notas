@@ -5,17 +5,21 @@ from typing import Any
 
 class MetaTable(type):
     def __new__(cls, name: str, bases: tuple, namespace: 'dict[str, fields.Field | Any]'):
-        __fields__ = {'id': fields.PrimaryKey(cls)}
-        __header__: 'list[str]' = []
+        _fields = {'id': fields.PrimaryKey(cls)}
+        _header: 'list[str]' = []
 
         for key, value in namespace.items():
             if isinstance(value, fields.Field):
                 value.set_name(key)
-                __fields__.setdefault(key, value)
-                __header__.append(key)
+                _fields.setdefault(key, value)
+                _header.append(key)
 
+        print(f'{name=}')
+        print(f'{_fields=}')
+        print(f'{_header=}')
         
-        namespace.setdefault('__fields__', __fields__)
+        namespace.setdefault('_fields', _fields)
+        namespace.setdefault('_header', _header)
 
         return type.__new__(cls, name, bases, namespace)
 
@@ -27,14 +31,14 @@ class Table(metaclass=MetaTable):
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
-            f: fields.Field = self.__fields__.get(key, ValueError)
+            f: fields.Field = self._fields.get(key, ValueError)
 
             if f == ValueError:
                 raise f('Campo inexistente')
             
             setattr(self, key, f.new(value))
 
-        for key in self.__fields__.keys():
+        for key in self._fields.keys():
             self.__dict__.setdefault(key, None)
         
         self.id = self.__class__.new_id()
@@ -62,7 +66,7 @@ class Table(metaclass=MetaTable):
 
     @classmethod
     def get_header(cls) -> 'tuple[str]':
-        return cls.__header__
+        return cls._header
 
     @classmethod
     def get_elements(cls) -> 'tuple[Table]':
@@ -142,7 +146,16 @@ class Table(metaclass=MetaTable):
         self.__class__.regs.append(self)
 
     def save(self, commit=False) -> None:
-        self.stage.update(self.__dict__)
+        values = {}
+        fields_names = self._fields.keys()
+
+        for attr, val in self.__dict__.items():
+            if attr in fields_names:
+                values.setdefault(attr, val)
+
+        print(f'{values=}')
+
+        self.stage.update(values)
         
         if commit:
             result = manager.Manager.save_table(self.__class__)
