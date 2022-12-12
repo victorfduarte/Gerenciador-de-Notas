@@ -32,7 +32,7 @@ class Manager:
     
     @classmethod
     def save_table(cls, table: 'bt.Table'):
-        struct = setter.dismount(cls)
+        struct = setter.dismount(table)
 
         file_name = cls.streams.get(table, None)            
         
