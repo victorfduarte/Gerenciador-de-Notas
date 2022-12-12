@@ -1,11 +1,24 @@
+from telas import main_window
 from dados.manager import Manager
-from dados.tabelas import Materia
-
-Manager.set_stream(Materia, 'Materia.json')
+from dados.tabelas import Materia, Avaliacao
 
 print('Status de carregamento:')
-print('Status final:', Manager.load_from_json(Materia))
+Manager.set_stream(Materia, 'Materia.json')
+Manager.set_stream(Avaliacao, 'Avaliacao.json')
 
-print(Materia.regs[1].get_all_values())
+status_mat = Manager.load_from_json(Materia)
+status_ava = Manager.load_from_json(Avaliacao)
 
-print(Materia.filter_by(nome='Português'))
+print('Status de Materia:', status_mat)
+print('Status de Avaliacao:', status_ava)
+
+print('Rodando...')
+status = main_window.create()
+print('Status final:', status)
+
+print('Status de salvamento final:')
+Manager.save_table(Materia)
+Manager.save_table(Avaliacao)
+print('Status final: OK')
+
+print('Finalizou!')

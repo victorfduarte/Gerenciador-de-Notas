@@ -2,15 +2,15 @@ import PySimpleGUI as sg
 from telas import adicionar_notas_window
 from telas import adicionar_materia_window
 from telas import editar_nota_window
-from dados.base_table import TableClass
+from dados.base_table import Table
 from dados.manager import Manager
 
 
 def create(nome_materia: str):
     
-    materia = gbd.get_table('Materia').get_elements_by(Nome=nome_materia)[0]
+    materia = Manager.get_table('Materia').filter_by(Nome=nome_materia)[0]
     print(materia.get_all_values())
-    dias = materia.get_value('Dias').get()
+    dias = materia.get_value('dias')
 
     checked = sg.theme_button_color_background()
     unchecked = sg.theme_text_element_background_color()
@@ -95,7 +95,7 @@ def create(nome_materia: str):
         elif event == '-EDIT_MAT-':
             adicionar_materia_window.create(True)
         elif event == '-ADD_NOTA-':
-            adicionar_notas_window.create(gbd, materia)
+            adicionar_notas_window.create(Manager, materia)
 
             valores = []
 
@@ -124,17 +124,17 @@ def create(nome_materia: str):
             print(f'{num_av=}')
             print(f'{materia_id=}')
             print(
-                gbd.get_table('Avaliacao').get_elements_by(
+                Manager.get_table('Avaliacao').get_elements_by(
                     Num_AV=num_av, Materia=materia_id
                 )
             )
 
-            aval = gbd.get_table('Avaliacao').get_elements_by(
+            aval = Manager.get_table('Avaliacao').get_elements_by(
                 Num_AV=num_av, Materia=materia_id
             )[0]
             print(aval)
 
-            editar_nota_window.create(gbd, materia, aval)
+            editar_nota_window.create(Manager, materia, aval)
 
             valores[row_selected] = (
                 f'{aval.get_value("Num_AV").get()}°',

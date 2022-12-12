@@ -7,7 +7,7 @@ from dados.manager import Manager
 def create():
     table_materia = Manager.get_table('Materia')
     nomes_materias = list(map(
-        lambda e: e.get_value('Nome').get(), table_materia.get_elements()
+        lambda e: e.get_value('nome'), table_materia.get_elements()
     ))
 
     font_normal = ('Arial', 17)

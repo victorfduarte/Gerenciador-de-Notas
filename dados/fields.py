@@ -15,6 +15,9 @@ class Field:
             return value
         else:
             raise ValueError()
+    
+    def __repr__(self) -> str:
+        return f'<Field named: {self.name}>'
 
 
 class PrimaryKey(Field):

@@ -24,6 +24,7 @@ class Manager:
             return ValueError('o argumento filename nunca foi definido antes')
 
         file_dict = setter.load(filename)
+        print(f'{file_dict=}')
 
         if type(file_dict) == ValueError:
             return file_dict
