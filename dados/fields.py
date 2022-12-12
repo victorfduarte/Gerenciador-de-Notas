@@ -27,7 +27,7 @@ class PrimaryKey(Field):
         self.supercls = cls
 
 
-class ForeignKey:
+class ForeignKey(Field):
     def __init__(self, table: 'bt.Table'):
         super().__init__()
         self.table = table 
