@@ -35,7 +35,7 @@ def create():
             break
         elif event == '-VIEW-':
             window.hide()
-            visualizar_window.create(Manager, values['-LIST_MATERIAS-'][0])
+            visualizar_window.create(values['-LIST_MATERIAS-'][0])
             window.un_hide()
         elif event == '-ADD-':
             adicionar_materia_window.create()

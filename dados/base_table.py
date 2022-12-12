@@ -6,7 +6,7 @@ from typing import Any
 class MetaTable(type):
     def __new__(cls, name: str, bases: tuple, namespace: 'dict[str, fields.Field | Any]'):
         _fields = {'id': fields.PrimaryKey(cls)}
-        _header: 'list[str]' = []
+        _header: 'list[str]' = ['id']
 
         for key, value in namespace.items():
             if isinstance(value, fields.Field):
