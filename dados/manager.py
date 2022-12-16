@@ -6,11 +6,12 @@ from . import base_table as bt
 from . import setter as setter
 
 class Manager:
-    tabelas: 'dict[str, bt.TableClass]' = dict(
+    tabelas: 'dict[str, bt.Table]' = dict(
             (c for c in inspect.getmembers(tbl, inspect.isclass))
         )
     streams: 'dict[bt.Table, str]'= {}
     
+
     @classmethod
     def set_stream(cls, table: 'bt.Table', filename: str):
         if table not in cls.streams.keys():
@@ -50,37 +51,7 @@ class Manager:
             return NameError(f'A tabela {name} não existe')
         return table
 
-    '''
-        self.filename = filename
 
-        self.ownername = ''
-        self.accounts: 'list[Conta]' = []
-
-        #print(self.__load__(filename))
-        self.mount(self.load(filename))
-    
-
-    def get_ownername(self) -> str:
-        return self.ownername
-
-    def get_elements(self) -> 'tuple[Conta]':
-        return self.accounts
-
-    def get_elements_by(self, **kwargs) -> 'tuple[Conta]':
-        contas = []
-
-        for conta in self.accounts:
-            for key, value in kwargs.items():
-                if conta.__getattribute__(key) != value:
-                    break
-            else:
-                contas.append(conta)
-
-        return contas
-
-    def create_data(self, conta: Conta):
-        ...
-    '''
 
 if __name__ == '__main__':
     m = Manager()
