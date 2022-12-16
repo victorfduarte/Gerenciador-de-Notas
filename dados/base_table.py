@@ -1,5 +1,6 @@
 from . import fields
 from . import manager
+from . import settings
 from typing import Any
 
 
@@ -14,9 +15,10 @@ class MetaTable(type):
                 _fields.setdefault(key, value)
                 _header.append(key)
 
-        print(f'{name=}')
-        print(f'{_fields=}')
-        print(f'{_header=}')
+        if settings['show_log']:
+            print(f'{name=}')
+            print(f'{_fields=}')
+            print(f'{_header=}')
         
         namespace.setdefault('_fields', _fields)
         namespace.setdefault('_header', _header)
@@ -28,6 +30,8 @@ class Table(metaclass=MetaTable):
     regs: 'list[Table]' = []
     next_free_id = 0
     free_ids = []
+    _header: 'list[str]'
+    _fields: 'dict[str, fields.Field]'
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():

@@ -1,0 +1,7 @@
+{
+    "show_log": false,
+    "streams": {
+        "Materia": "Materia.json",
+        "Avaliacao": "Avaliacao.json"
+    }
+}

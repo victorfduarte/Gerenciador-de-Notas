@@ -1,10 +1,17 @@
+import inspect
+
 from telas import main_window
 from dados.manager import Manager
+from dados import tabelas
 from dados.tabelas import Materia, Avaliacao
+from dados import settings
 
 print('Status de carregamento:')
-Manager.set_stream(Materia, 'Materia.json')
-Manager.set_stream(Avaliacao, 'Avaliacao.json')
+tables = dict(inspect.getmembers(tabelas, inspect.isclass))
+print(tables)
+
+for table_name, file in settings['streams'].items():
+    Manager.set_stream(tables[table_name], file)
 
 status_mat = Manager.load_from_json(Materia)
 status_ava = Manager.load_from_json(Avaliacao)
