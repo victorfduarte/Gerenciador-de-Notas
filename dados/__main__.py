@@ -1,3 +1,12 @@
+'''----Funções disponíveis----
+init_json_table [file.json] [table]: recebe um nome para o arquivo json da 
+        tabela e o nome da tabela definida em 'tabelas.py'
+set_stream [file.json] [table]: configura uma relação entre a tabela e o
+        arquivo para onde ela será salva. Utilizada quando a criação é
+        feita de forma manual
+'''
+
+
 from . import settings
 import sys
 import os
@@ -57,7 +66,7 @@ def init_json_table(args):
         'values':[]
     }
 
-    with open(f'dados/jsons/{file_json}', 'x', encoding='utf-8') as file:
+    with open(f'dados/jsons/{file_json}', 'w', encoding='utf-8') as file:
         filestr = json.dumps(struct, indent=4)
         file.write(filestr)
     
@@ -69,7 +78,11 @@ if len(sys.argv) < 2:
     print('Digite algum comando ou help para conhecer os comandos')
     exit()
 
-if sys.argv[1] == 'init_json_table':
+
+if sys.argv[1] == 'help':
+    print(__doc__)
+
+elif sys.argv[1] == 'init_json_table':
     init_json_table(sys.argv)
 
 elif sys.argv[1] == 'set_stream':
