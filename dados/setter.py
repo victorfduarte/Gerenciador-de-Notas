@@ -23,6 +23,7 @@ def load(filename: str) -> dict:
 
 def mount(table: 'bt.Table', struct: dict):
     registros: 'list[list]' = struct['values']
+
     for reg in registros:
         pack = dict(zip(struct['header'], reg))
         print('Nova instância: ', end='')
@@ -32,12 +33,13 @@ def mount(table: 'bt.Table', struct: dict):
 
 
 def dismount(table: 'bt.Table') -> dict:
-    list_regs = list(
-        map(
-            lambda reg: tuple(reg.to_dict().values()),
-            table.get_elements()
-        )
-    )
+    list_regs = []
+
+    for reg in table.get_elements():
+        list_reg = []
+        for key in table._header:
+            list_reg.append(getattr(reg, key))
+        list_regs.append(list_reg)
     
     struct = {
         'header': table.get_header(),
