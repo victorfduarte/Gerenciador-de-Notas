@@ -3,31 +3,26 @@
         "id",
         "nome",
         "prof",
-        "dias",
-        "avaliacoes"
+        "obs"
     ],
-    
     "values": [
         [
             0,
             "Português",
-            "Elizabeth",
-            ["TER", "SEG"],
-            [0, 6]
+            null,
+            null
         ],
         [
-            1,
-            "Química",
-            "Savio",
-            ["QUA"],
-            [1, 2]
+            0,
+            "Matemática",
+            null,
+            null
         ],
         [
-            2,
-            "Biologia",
-            "Flávio",
-            ["QUI", "QUA"],
-            [3, 4, 5, 7]
+            0,
+            "Filosofia",
+            null,
+            null
         ]
     ]
 }

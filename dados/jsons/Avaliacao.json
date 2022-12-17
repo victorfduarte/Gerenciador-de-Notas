@@ -1,29 +1,11 @@
 {
     "header": [
         "id",
-        "num_av",
         "nota",
-        "data"
+        "materia",
+        "data",
+        "tipo",
+        "peso"
     ],
-
-    "values": [
-        [
-            0,
-            2,
-            10.0,
-            "Wed, 16 Nov 2022"
-        ],
-        [
-            1,
-            1,
-            8.0,
-            "Sat, 05 Nov 2022"
-        ],
-        [
-            2,
-            2,
-            6.0,
-            "Wed, 16 Nov 2022"
-        ]
-    ]
+    "values": []
 }
