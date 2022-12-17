@@ -1,7 +1,10 @@
 {
     "show_log": false,
     "streams": {
-        "Materia": "Materia.json",
-        "Avaliacao": "Avaliacao.json"
+        "Materia": "materia.json",
+        "Avaliacao": "avaliacao.json",
+        "Email": "email.json",
+        "Telefone": "telefone.json",
+        "Professor": "professor.json"
     }
 }
