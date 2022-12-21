@@ -1,88 +1,83 @@
 import PySimpleGUI as sg
-from telas import adicionar_notas_window
-from telas import adicionar_materia_window
-from telas import editar_nota_window
-from dados.base_table import Table
-from dados.manager import Manager
+from . import adicionar_notas_window
+from . import editar_materia_window
+from . import editar_nota_window
+from dados import Manager
+from dados.tabelas import Materia, Avaliacao, Professor
+
+font_normal = ('Arial', 17)
+font_bolder = ('Arial', 17, 'bold')
+font_button = ('Arial', 14)
+font_title = ('Arial', 20, 'bold')
 
 
-def create(nome_materia: str):
-    
-    materia = Manager.get_table('Materia').filter_by(Nome=nome_materia)[0]
+def render(nome_materia, nome_prof, obs_mat, avs_head, avs_values):
+    print(obs_mat)
+    layout = [
+        [sg.Text(
+            nome_materia, font=font_title, key='-MAT_NOME-'
+         ), sg.Push(), sg.Button('Voltar', font=font_button, key='-BACK-')],
+        [sg.HorizontalSeparator()],
+        [sg.Text('Professor(a):', font=font_normal),
+         sg.Text(nome_prof, font=font_bolder, key='-PROF-')],
+        [sg.Text('Obs:', font=font_normal)],
+        [sg.Push(), sg.Button('Editar', font=font_button, key='-EDIT_MAT-')],
+        [sg.HorizontalSeparator()],
+        [sg.Table(
+            avs_values, avs_head, font=font_normal, hide_vertical_scroll=True,
+            expand_x=True, num_rows=6, col_widths=(5, 6, 11), auto_size_columns=False,
+            enable_events=True, key='-TABLE-'
+        )],
+        [sg.Text('Média das notas:', font=font_normal,), sg.Text('', font=font_normal)],
+        [sg.Button('Adicionar Nota', font=font_button,key='-ADD_NOTA-')],
+    ]
+
+    return layout
+
+
+def create(materia: Materia):
+    print(materia)
     print(materia.get_all_values())
-    dias = materia.get_value('dias')
+
+    nome_materia = materia.nome
+    prof = Professor.get_by_pk(materia.prof)
+    nome_prof = prof.nome if prof else ''
 
     checked = sg.theme_button_color_background()
     unchecked = sg.theme_text_element_background_color()
 
-    head = ['Av.', 'Nota', 'Data']
+    head = ['Nota', 'Data']
     valores = []
 
-    fk = materia.get_value('Avaliacoes')
-    print(f'{fk=}')
-    for reg in fk.get():
-        attrs = fk.get_table().get_element_by_pk(reg).to_dict()
-        print(attrs)
+    avs = Avaliacao.filter_by(materia=materia.get_pk())
+    print(f'{avs=}')
+    for reg in avs:
+        print(f'{reg=}')
+        attrs = reg.to_dict()
+        print(f'{attrs=}')
         formato = (
-            f'{attrs["Num_AV"]}°',
             f'{attrs["Nota"]:.1f}',
             f'{attrs["Data"]}',
         )
         valores.append(formato)
     
-    valores.sort(key=lambda reg: int(reg[0][0]))
+    # valores.sort(key=lambda reg: int(reg[0][0]))
 
-    font_normal = ('Arial', 17)
-    font_bolder = ('Arial', 17, 'bold')
-    font_button = ('Arial', 14)
-    font_title = ('Arial', 20, 'bold')
-    size_label_dia = (3, 1)
+    layout = render(
+        nome_materia,
+        nome_prof,
+        materia.obs,
+        head,
+        valores
+    )
 
-    layout = [
-        [sg.Push(), sg.Push(), sg.Text(
-            nome_materia, font=font_title, border_width=25
-         ), sg.Push(), sg.Button('Voltar', font=font_button, key='-BACK-')],
-        [sg.Text('Professor(a):', font=font_normal),
-         sg.Text(getattr(materia, 'Prof').get(), font=font_bolder, )],
-        [sg.HorizontalSeparator()],
-        [sg.Push(),
-         sg.Text(
-            'Seg', font=font_normal, key='-SEG-', border_width=8, pad=3,
-            size=size_label_dia, justification='c',
-            background_color = checked if 'SEG' in dias else unchecked
-         ), sg.Push(),
-         sg.Text(
-            'Ter', font=font_normal, key='-TER-', border_width=8, pad=3,
-            size=size_label_dia, justification='c',
-            background_color = checked if 'TER' in dias else unchecked
-         ), sg.Push(),
-         sg.Text(
-            'Qua', font=font_normal, key='-QUA-', border_width=8, pad=3,
-            size=size_label_dia, justification='c',
-            background_color = checked if 'QUA' in dias else unchecked
-         ), sg.Push(),
-         sg.Text(
-            'Qui', font=font_normal, key='-QUI-', border_width=8, pad=3,
-            size=size_label_dia, justification='c',
-            background_color = checked if 'QUI' in dias else unchecked
-         ), sg.Push(),
-         sg.Text(
-            'Sex', font=font_normal, key='-SEX-', border_width=8, pad=3,
-            size=size_label_dia, justification='c',
-            background_color = checked if 'SEX' in dias else unchecked
-         ), sg.Push()],
-        [sg.HorizontalSeparator()],
-        [sg.Table(
-            valores, head, font=font_normal, hide_vertical_scroll=True, expand_x=True,
-            num_rows=6, col_widths=(5, 6, 11), auto_size_columns=False,
-            enable_events=True, key='-TABLE-'
-        )],
-        [sg.Text('Média das notas:', font=font_normal,), sg.Text('', font=font_normal)],
-        [sg.Button('Editar Matéria', font=font_button, key='-EDIT_MAT-'),
-         sg.Button('Adicionar Nota', font=font_button,key='-ADD_NOTA-')],
-    ]
-
-    window = sg.Window('Visualizar Matéria', layout, element_padding=7, modal=True)
+    window = sg.Window(
+        'Visualizar Matéria',
+        layout,
+        size=(360, 550),
+        element_padding=7,
+        modal=True
+    )
 
     while True:
         event, values = window.read()
@@ -93,25 +88,35 @@ def create(nome_materia: str):
         if event == '-BACK-':
             break
         elif event == '-EDIT_MAT-':
-            adicionar_materia_window.create(True)
+            editar_materia_window.create(materia)
+
+            nome_materia = materia.nome
+            prof = Professor.get_by_pk(materia.prof) if materia.prof else None
+            nome_prof = prof.nome if prof else ''
+
+            window['-MAT_NOME-'].update(nome_materia)
+            window['-PROF-'].update(nome_prof)
+
+            print('Layout atualizado')
+
         elif event == '-ADD_NOTA-':
             adicionar_notas_window.create(Manager, materia)
 
             valores = []
 
-            fk = materia.get_value('Avaliacoes')
-            print(f'{fk.get()=}')
-            for reg in fk.get():
-                attrs = fk.get_table().get_element_by_pk(reg).to_dict()
-                print(attrs)
+            avs = Avaliacao.filter_by(materia=materia.get_pk())
+            print(f'{avs=}')
+            for reg in avs:
+                print(f'{reg=}')
+                attrs = reg.to_dict()
+                print(f'{attrs=}')
                 formato = (
-                    f'{attrs["Num_AV"]}°',
                     f'{attrs["Nota"]:.1f}',
                     f'{attrs["Data"]}',
                 )
                 valores.append(formato)
             
-            valores.sort(key=lambda reg: int(reg[0][0]))
+            # valores.sort(key=lambda reg: int(reg[0][0]))
             
             window['-TABLE-'].update(values=valores)
 
