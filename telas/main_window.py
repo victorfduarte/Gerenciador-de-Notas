@@ -3,11 +3,11 @@ from telas import visualizar_window
 from telas import adicionar_materia_window
 from telas import tabela_notas_window
 from dados import Manager
+from dados.tabelas import Materia
 
 def create():
-    table_materia = Manager.get_table('Materia')
     nomes_materias = list(map(
-        lambda e: e.get_value('nome'), table_materia.get_elements()
+        lambda e: e.get_value('nome'), Materia.get_elements()
     ))
 
     font_normal = ('Arial', 17)
@@ -36,15 +36,24 @@ def create():
         elif event == '-VIEW-':
             if values['-LIST_MATERIAS-']:
                 window.hide()
-                visualizar_window.create(values['-LIST_MATERIAS-'][0])
+                materia = Materia.filter_by(nome=values['-LIST_MATERIAS-'][0])[0]
+                visualizar_window.create(materia)
+
+                nomes_materias = list(map(
+                    lambda e: e.get_value('nome'), Materia.get_elements()
+                ))
+                window['-LIST_MATERIAS-'].update(values=nomes_materias)
+                
                 window.un_hide()
+
         elif event == '-ADD-':
             adicionar_materia_window.create()
 
             nomes_materias = list(map(
-                lambda e: e.get_value('nome'), table_materia.get_elements()
+                lambda e: e.get_value('nome'), Materia.get_elements()
             ))
             window['-LIST_MATERIAS-'].update(values=nomes_materias)
+
         elif event == '-TABLE-':
             tabela_notas_window.create()
 
